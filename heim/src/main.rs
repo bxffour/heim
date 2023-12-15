@@ -2,7 +2,7 @@ use clap::Parser;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
 use std::io;
 
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 #[derive(Parser, Debug)]
 #[command(author, version, about, long_about = None)]
@@ -16,7 +16,6 @@ struct Cli {
     ssh_config_path: String,
 }
 
-use ssh_config;
 impl Cli {
     fn new(ssh_config_path: String) -> Self {
         Cli { ssh_config_path }
@@ -43,6 +42,8 @@ fn main() {
 
     connection
         .arg(hosts[selection].as_str())
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
         .spawn()
         .expect("Failed to run ssh connection.");
 }
