@@ -8,7 +8,7 @@ use std::process::{Command, Stdio};
 #[command(author, version, about, long_about = None)]
 struct Args {
     /// ssh_config path
-    #[arg(short, long)]
+    #[arg(short, long, default_value = "")]
     cfg: String,
 }
 
@@ -28,7 +28,17 @@ impl Cli {
 
 fn main() {
     let args = Args::parse();
-    let cli = Cli::new(args.cfg);
+
+    let ssh_config = match args.cfg.as_str() {
+        "" => dirs::home_dir()
+            .expect("error retrieving home directory")
+            .join(".ssh/config")
+            .to_string_lossy()
+            .into_owned(),
+        _ => args.cfg.to_string(),
+    };
+
+    let cli = Cli::new(ssh_config);
     let hosts = cli.get_hosts().unwrap();
 
     let selection = FuzzySelect::with_theme(&ColorfulTheme::default())
@@ -36,14 +46,17 @@ fn main() {
         .default(0)
         .items(&hosts[..])
         .interact()
-        .unwrap();
+        .expect("error getting fuzzy selector");
 
     let mut connection = Command::new("ssh");
 
-    connection
+    let mut process = connection
         .arg(hosts[selection].as_str())
-        .stdin(Stdio::piped())
-        .stdout(Stdio::piped())
+        .stdin(Stdio::inherit())
+        .stdout(Stdio::inherit())
+        .stderr(Stdio::inherit())
         .spawn()
         .expect("Failed to run ssh connection.");
+
+    process.wait().expect("command panicked");
 }
