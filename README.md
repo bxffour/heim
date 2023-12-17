@@ -50,4 +50,4 @@ This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgments
 
-Heim is built with ❤️ by [Nana Kwaadwo](https://github.com/bxffour) & [blvckprince](https://github.com/blackprince001).
+Heim is built with ❤️ by [Nana Kwadwo](https://github.com/bxffour) & [blvckprince](https://github.com/blackprince001).
