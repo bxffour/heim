@@ -1,5 +1,6 @@
 use clap::Parser;
 use dialoguer::{theme::ColorfulTheme, FuzzySelect};
+use heim::ssh_config;
 use std::io;
 
 use std::process::{Command, Stdio};
